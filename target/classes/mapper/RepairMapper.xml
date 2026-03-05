@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dorm.mapper.RepairMapper">
+
+    <insert id="insert" parameterType="com.dorm.entity.Repair" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO repair (user_id, dorm_id, repair_type, description, status, result, created_at)
+        VALUES (#{userId}, #{dormId}, #{repairType}, #{description}, #{status}, #{result}, NOW())
+    </insert>
+
+    <update id="update" parameterType="com.dorm.entity.Repair">
+        UPDATE repair
+        SET status = #{status},
+            result = #{result},
+            worker_name = #{workerName},
+            worker_phone = #{workerPhone},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <select id="findAllWithDetails" resultType="map">
+        SELECT r.id, r.user_id, r.dorm_id, r.repair_type, r.description, r.status, r.result,
+               r.worker_name, r.worker_phone, r.created_at,
+               u.name as student_name, u.student_id,
+               CONCAT(d.building, ' - ', d.room_number) as dorm
+        FROM repair r
+        LEFT JOIN sys_user u ON r.user_id = u.id
+        LEFT JOIN assignment a ON r.user_id = a.user_id AND a.status = 'active'
+        LEFT JOIN dorm d ON a.dorm_id = d.id
+        ORDER BY r.created_at DESC
+    </select>
+
+    <select id="countPending" resultType="int">
+        SELECT COUNT(*) FROM repair WHERE status IN ('pending', 'approved', 'assigned')
+    </select>
+
+</mapper>

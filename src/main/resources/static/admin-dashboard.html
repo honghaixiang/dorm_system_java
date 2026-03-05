@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员控制台 - 宿舍管理系统</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard">
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>宿舍管理系统</h1>
+                    <p>管理员控制台</p>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <h3 id="userName">管理员</h3>
+                    <p>Administrator</p>
+                </div>
+                <div class="user-avatar" id="userAvatar">A</div>
+                <button class="btn-logout" onclick="logout()">退出登录</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
+            <div class="stat-card purple">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <div class="stat-label">学生总数</div>
+                <div class="stat-value" id="totalStudents">0</div>
+            </div>
+            <div class="stat-card pink">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    </svg>
+                </div>
+                <div class="stat-label">宿舍总数</div>
+                <div class="stat-value" id="totalDorms">0</div>
+            </div>
+            <div class="stat-card blue">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="7" width="20" height="14" rx="2"></rect>
+                    </svg>
+                </div>
+                <div class="stat-label">可用床位</div>
+                <div class="stat-value" id="availableBeds">0</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                    </svg>
+                </div>
+                <div class="stat-label">待处理报修</div>
+                <div class="stat-value" id="pendingRepairs">0</div>
+            </div>
+        </div>
+
+        <!-- 公告管理 -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">📢 公告管理</h2>
+                <button class="btn-add" onclick="showAddNoticeModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    发布公告
+                </button>
+            </div>
+            <div class="table-container">
+                <table id="noticesTable">
+                    <thead>
+                        <tr>
+                            <th>标题</th>
+                            <th>内容</th>
+                            <th>类型</th>
+                            <th>优先级</th>
+                            <th>发布时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 活动管理 -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">🎉 活动管理</h2>
+                <button class="btn-add" onclick="showAddActivityModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    创建活动
+                </button>
+            </div>
+            <div class="table-container">
+                <table id="activitiesTable">
+                    <thead>
+                        <tr>
+                            <th>活动名称</th>
+                            <th>地点</th>
+                            <th>时间</th>
+                            <th>报名人数</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 宿舍管理 -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">宿舍管理</h2>
+                <button class="btn-add" onclick="showAddDormModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    添加宿舍
+                </button>
+            </div>
+            <div class="table-container">
+                <table id="dormsTable">
+                    <thead>
+                        <tr>
+                            <th>楼栋</th>
+                            <th>房间号</th>
+                            <th>总床位</th>
+                            <th>可用床位</th>
+                            <th>设施</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 分配记录 -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">宿舍分配记录</h2>
+                <button class="btn-add" onclick="showAssignModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    分配宿舍
+                </button>
+            </div>
+            <div class="table-container">
+                <table id="assignmentsTable">
+                    <thead>
+                        <tr>
+                            <th>学生姓名</th>
+                            <th>学号</th>
+                            <th>楼栋</th>
+                            <th>房间号</th>
+                            <th>床位号</th>
+                            <th>分配时间</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 报修管理 -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">🔧 报修工单管理</h2>
+            </div>
+            <div class="table-container">
+                <table id="repairsTable">
+                    <thead>
+                        <tr>
+                            <th>学生姓名</th>
+                            <th>学号</th>
+                            <th>宿舍</th>
+                            <th>报修类型</th>
+                            <th>问题描述</th>
+                            <th>状态</th>
+                            <th>处理结果</th>
+                            <th>提交时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 费用管理 -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">费用管理</h2>
+                <button class="btn-add" onclick="showAddFeeModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    添加费用
+                </button>
+            </div>
+            <div class="table-container">
+                <table id="feesTable">
+                    <thead>
+                        <tr>
+                            <th>学生姓名</th>
+                            <th>学号</th>
+                            <th>费用类型</th>
+                            <th>金额</th>
+                            <th>月份</th>
+                            <th>状态</th>
+                            <th>创建时间</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    
+        <!-- 违规管理 -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">⚠️ 违规管理</h2>
+                <button class="btn-add" onclick="showAddViolationModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    添加违规记录
+                </button>
+            </div>
+            <div class="table-container">
+                <table id="violationsTable">
+                    <thead>
+                        <tr>
+                            <th>学生姓名</th>
+                            <th>学号</th>
+                            <th>违规类型</th>
+                            <th>描述</th>
+                            <th>状态</th>
+                            <th>记录时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 费用统计报表 -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">📊 费用统计报表</h2>
+                <button class="btn-add" onclick="exportFeeReport()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    导出报表
+                </button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                <div style="padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; color: white;">
+                    <div style="font-size: 14px; opacity: 0.9;">总收费金额</div>
+                    <div style="font-size: 32px; font-weight: bold; margin: 10px 0;" id="totalFeeAmount">¥0</div>
+                </div>
+                <div style="padding: 20px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 12px; color: white;">
+                    <div style="font-size: 14px; opacity: 0.9;">已缴金额</div>
+                    <div style="font-size: 32px; font-weight: bold; margin: 10px 0;" id="paidFeeAmount">¥0</div>
+                </div>
+                <div style="padding: 20px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 12px; color: white;">
+                    <div style="font-size: 14px; opacity: 0.9;">未缴金额</div>
+                    <div style="font-size: 32px; font-weight: bold; margin: 10px 0;" id="unpaidFeeAmount">¥0</div>
+                </div>
+                <div style="padding: 20px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); border-radius: 12px; color: white;">
+                    <div style="font-size: 14px; opacity: 0.9;">缴费率</div>
+                    <div style="font-size: 32px; font-weight: bold; margin: 10px 0;" id="feePaymentRate">0%</div>
+                </div>
+            </div>
+            <div id="feeChartContainer" style="height: 300px; background: #f8f9fa; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #999;">
+                费用统计图表（简化版：显示为表格）
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="addNoticeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>发布公告</h2></div>
+            <form id="addNoticeForm">
+                <div class="form-group">
+                    <label>标题</label>
+                    <input type="text" id="noticeTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>内容</label>
+                    <textarea id="noticeContent" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>类型</label>
+                    <select id="noticeType">
+                        <option value="normal">普通</option>
+                        <option value="important">重要</option>
+                        <option value="event">活动</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>优先级</label>
+                    <select id="noticePriority">
+                        <option value="low">低</option>
+                        <option value="medium">中</option>
+                        <option value="high">高</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('addNoticeModal')">取消</button>
+                    <button type="submit" class="btn-submit">发布</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="addActivityModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>创建活动</h2></div>
+            <form id="addActivityForm">
+                <div class="form-group">
+                    <label>活动名称</label>
+                    <input type="text" id="activityTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>活动描述</label>
+                    <textarea id="activityDescription" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>活动地点</label>
+                    <input type="text" id="activityLocation" required>
+                </div>
+                <div class="form-group">
+                    <label>活动时间</label>
+                    <input type="datetime-local" id="activityDate" required>
+                </div>
+                <div class="form-group">
+                    <label>最大人数</label>
+                    <input type="number" id="activityMaxParticipants" min="1" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('addActivityModal')">取消</button>
+                    <button type="submit" class="btn-submit">创建</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="addDormModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>添加宿舍</h2></div>
+            <form id="addDormForm">
+                <div class="form-group">
+                    <label>楼栋</label>
+                    <input type="text" id="dormBuilding" required>
+                </div>
+                <div class="form-group">
+                    <label>房间号</label>
+                    <input type="text" id="dormRoom" required>
+                </div>
+                <div class="form-group">
+                    <label>床位数</label>
+                    <input type="number" id="dormBeds" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>设施</label>
+                    <input type="text" id="dormFacilities" placeholder="空调,热水,独卫">
+                </div>
+                <div class="form-group">
+                    <label>宿舍图片URL</label>
+                    <input type="text" id="dormImage" placeholder="http://example.com/image.jpg">
+                    <small style="color: #999; display: block; margin-top: 5px;">请输入图片链接地址</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('addDormModal')">取消</button>
+                    <button type="submit" class="btn-submit">添加</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="assignModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>分配宿舍</h2></div>
+            <form id="assignForm">
+                <div class="form-group">
+                    <label>选择学生</label>
+                    <select id="assignStudent" required></select>
+                </div>
+                <div class="form-group">
+                    <label>选择宿舍</label>
+                    <select id="assignDorm" required></select>
+                </div>
+                <div class="form-group">
+                    <label>床位号</label>
+                    <input type="number" id="assignBed" min="1" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('assignModal')">取消</button>
+                    <button type="submit" class="btn-submit">分配</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="addFeeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>添加费用</h2></div>
+            <form id="addFeeForm">
+                <div class="form-group">
+                    <label>选择学生</label>
+                    <select id="feeStudent" required></select>
+                </div>
+                <div class="form-group">
+                    <label>费用类型</label>
+                    <select id="feeType" required>
+                        <option value="水费">水费</option>
+                        <option value="电费">电费</option>
+                        <option value="住宿费">住宿费</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>金额</label>
+                    <input type="number" id="feeAmount" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>月份</label>
+                    <input type="month" id="feeMonth" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('addFeeModal')">取消</button>
+                    <button type="submit" class="btn-submit">添加</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="addViolationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>添加违规记录</h2></div>
+            <form id="addViolationForm">
+                <div class="form-group">
+                    <label>选择学生</label>
+                    <select id="violationStudent" required></select>
+                </div>
+                <div class="form-group">
+                    <label>违规类型</label>
+                    <select id="violationType" required>
+                        <option value="晚归">晚归</option>
+                        <option value="抽烟">抽烟</option>
+                        <option value="酗酒">酗酒</option>
+                        <option value="噪音">噪音扰民</option>
+                        <option value="卫生">卫生不达标</option>
+                        <option value="违规用电">违规用电</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>详细描述</label>
+                    <textarea id="violationDescription" required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('addViolationModal')">取消</button>
+                    <button type="submit" class="btn-submit">添加</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <!-- 报修审核Modal -->
+    <div id="reviewRepairModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>审核报修申请</h2>
+            </div>
+            <div style="padding: 30px;">
+                <div id="repairReviewDetails" style="margin-bottom: 25px;"></div>
+                <div class="form-group">
+                    <label>审核决定</label>
+                    <select id="reviewDecision">
+                        <option value="approve">批准</option>
+                        <option value="reject">拒绝</option>
+                    </select>
+                </div>
+                <div class="form-group" id="rejectReasonGroup" style="display: none;">
+                    <label>拒绝原因</label>
+                    <textarea id="rejectReason" placeholder="请说明拒绝原因..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('reviewRepairModal')">取消</button>
+                    <button type="button" class="btn-submit" onclick="submitReview()">提交审核</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分配维修任务Modal -->
+    <div id="assignRepairModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>分配维修任务</h2>
+            </div>
+            <form id="assignRepairForm">
+                <div class="form-group">
+                    <label>维修人员</label>
+                    <input type="text" id="repairWorkerName" required placeholder="输入维修人员姓名">
+                </div>
+                <div class="form-group">
+                    <label>联系电话</label>
+                    <input type="tel" id="repairWorkerPhone" required placeholder="输入维修人员电话">
+                </div>
+                <div class="form-group">
+                    <label>预计维修时间</label>
+                    <input type="datetime-local" id="estimatedTime" required>
+                </div>
+                <div class="form-group">
+                    <label>备注说明</label>
+                    <textarea id="assignNote" placeholder="其他说明信息..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('assignRepairModal')">取消</button>
+                    <button type="submit" class="btn-submit">分配任务</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 维修反馈Modal -->
+    <div id="feedbackRepairModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>反馈维修结果</h2>
+            </div>
+            <form id="feedbackRepairForm">
+                <div class="form-group">
+                    <label>维修结果</label>
+                    <select id="repairResult" required>
+                        <option value="">请选择</option>
+                        <option value="success">维修成功</option>
+                        <option value="failed">维修失败</option>
+                        <option value="partial">部分维修</option>
+                        <option value="needParts">需要配件</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>详细说明</label>
+                    <textarea id="resultDescription" required placeholder="请详细描述维修情况、发现的问题、采取的措施等..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>耗时（小时）</label>
+                    <input type="number" id="repairDuration" step="0.5" min="0" placeholder="维修所用时间">
+                </div>
+                <div class="form-group">
+                    <label>费用（元）</label>
+                    <input type="number" id="repairCost" step="0.01" min="0" placeholder="维修产生的费用">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('feedbackRepairModal')">取消</button>
+                    <button type="submit" class="btn-submit">提交反馈</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    </div>
+
+    <script src="admin-dashboard.js"></script>
+</body>
+</html>

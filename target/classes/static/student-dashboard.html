@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生控制台 - 宿舍管理系统</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard">
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>宿舍管理系统</h1>
+                    <p>学生控制台</p>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <h3 id="userName">加载中...</h3>
+                    <p id="userStudentId">-</p>
+                </div>
+                <div class="user-avatar" id="userAvatar">S</div>
+                <button class="btn-logout" onclick="logout()">退出登录</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- 公告栏 -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">📢 最新公告</h2>
+            </div>
+            <div id="noticesList" style="display: flex; flex-direction: column; gap: 15px;">
+                <div style="text-align: center; padding: 40px; color: #999;">加载中...</div>
+            </div>
+        </div>
+
+        <!-- 个人信息卡片 -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">我的信息</h2>
+                <button class="btn-add" onclick="showEditProfileModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    编辑信息
+                </button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                <div>
+                    <h3 style="margin-bottom: 20px; color: #667eea;">基本信息</h3>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div style="display: flex; justify-content: space-between; padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                            <span style="color: #666;">姓名：</span>
+                            <strong id="profileName">-</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                            <span style="color: #666;">学号：</span>
+                            <strong id="profileStudentId">-</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                            <span style="color: #666;">手机：</span>
+                            <strong id="profilePhone">-</strong>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 20px; color: #667eea;">宿舍信息</h3>
+                    <div id="dormInfo" style="display: flex; flex-direction: column; gap: 15px;">
+                        <div style="text-align: center; padding: 40px; color: #999;">
+                            暂无宿舍分配
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 宿舍浏览 -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">🏠 宿舍浏览</h2>
+            </div>
+            <div class="table-container">
+                <table id="allDormsTable">
+                    <thead>
+                        <tr>
+                            <th>楼栋</th>
+                            <th>房间号</th>
+                            <th>总床位</th>
+                            <th>可用床位</th>
+                            <th>设施</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 活动报名 -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">🎉 活动报名</h2>
+            </div>
+            <div class="table-container">
+                <table id="activitiesTable">
+                    <thead>
+                        <tr>
+                            <th>活动名称</th>
+                            <th>活动地点</th>
+                            <th>活动时间</th>
+                            <th>报名人数</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 我的报名 -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">我的报名</h2>
+            </div>
+            <div class="table-container">
+                <table id="myRegistrationsTable">
+                    <thead>
+                        <tr>
+                            <th>活动名称</th>
+                            <th>活动地点</th>
+                            <th>活动时间</th>
+                            <th>报名时间</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 我的费用 -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">我的费用</h2>
+            </div>
+            <div class="table-container">
+                <table id="feesTable">
+                    <thead>
+                        <tr>
+                            <th>费用类型</th>
+                            <th>金额</th>
+                            <th>月份</th>
+                            <th>状态</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 我的报修 -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">🔧 我的报修</h2>
+                <button class="btn-add" onclick="showRepairModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    提交报修
+                </button>
+            </div>
+            <div class="table-container">
+                <table id="repairsTable">
+                    <thead>
+                        <tr>
+                            <th>宿舍</th>
+                            <th>报修类型</th>
+                            <th>问题描述</th>
+                            <th>状态</th>
+                            <th>处理结果</th>
+                            <th>提交时间</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑个人信息Modal -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>编辑个人信息</h2>
+            </div>
+            <form id="editProfileForm">
+                <div class="form-group">
+                    <label>姓名</label>
+                    <input type="text" id="editName" required>
+                </div>
+                <div class="form-group">
+                    <label>手机号</label>
+                    <input type="tel" id="editPhone" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('editProfileModal')">取消</button>
+                    <button type="submit" class="btn-submit">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 宿舍详情Modal -->
+    <div id="dormDetailModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>宿舍详情</h2>
+            </div>
+            <div id="dormDetailContent" style="padding: 20px;">
+                <!-- 动态内容 -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeModal('dormDetailModal')">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 报修Modal - 格式类似添加违规记录 -->
+    <div id="repairModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>提交报修</h2>
+            </div>
+            <form id="repairForm">
+                <div class="form-group">
+                    <label>报修类型</label>
+                    <select id="repairType" required>
+                        <option value="水电">水电问题</option>
+                        <option value="门窗">门窗问题</option>
+                        <option value="家具">家具损坏</option>
+                        <option value="网络">网络问题</option>
+                        <option value="空调">空调问题</option>
+                        <option value="卫浴">卫浴问题</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>问题描述</label>
+                    <textarea id="repairDescription" required placeholder="请详细描述需要维修的问题..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('repairModal')">取消</button>
+                    <button type="submit" class="btn-submit">提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="student-dashboard.js"></script>
+</body>
+</html>
