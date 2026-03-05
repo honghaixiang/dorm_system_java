@@ -11,7 +11,7 @@ import java.util.Collections;
 
 @Configuration
 public class CorsConfig {
-    
+   //三德子
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
