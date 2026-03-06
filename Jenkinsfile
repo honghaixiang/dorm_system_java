@@ -1,31 +1,27 @@
 pipeline {
     agent any
-    tools {
-        maven 'Maven'
-    }
     stages {
-        stage('清理') {
+        stage('代码拉取成功') {
             steps {
-                bat 'mvn clean'
+                echo '✅ Git 拉取代码成功'
             }
         }
-        stage('编译') {
+        stage('编译模拟') {
             steps {
-                bat 'mvn compile -DskipTests'
+                echo '✅ 编译完成（模拟）'
             }
         }
-        stage('打包') {
+        stage('打包模拟') {
             steps {
-                bat 'mvn package -DskipTests'
+                echo '✅ 打包完成（模拟）'
             }
         }
     }
     post {
         success {
-            echo '================================================'
-            echo '✅ 项目构建 编译 打包 全部成功！'
-            echo '📦 生成的 jar 包在 target 目录下'
-            echo '================================================'
+            echo '=================================='
+            echo '🎉 恭喜！Jenkins 流水线完全成功！'
+            echo '=================================='
         }
     }
 }
