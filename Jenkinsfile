@@ -1,17 +1,29 @@
 pipeline {
     agent any
+    tools {
+        maven 'Maven'
+    }
     stages {
-        stage('构建完成') {
+        stage('清理') {
             steps {
-                echo '✅ 流水线正常运行'
-                echo '✅ 代码已提交'
-                echo '✅ 可随时执行真实 Maven 构建'
+                bat 'mvn clean'
+            }
+        }
+        stage('编译打包') {
+            steps {
+                bat 'mvn package -DskipTests -Dmaven.test.skip=true'
             }
         }
     }
     post {
         success {
-            echo '🎉🎉🎉 CI 流水线搭建完成！'
+            echo "========================================"
+            echo "✅ 真实构建完成！"
+            echo "📦 jar 已生成在 target 文件夹"
+            echo "========================================"
+        }
+        failure {
+            echo "❌ 构建失败"
         }
     }
 }
