@@ -1,4 +1,4 @@
-package com.dorm;
+package com.dorm.PipelineStep;
 
 import org.springframework.stereotype.Component;
 
@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 public class Step1 implements PipelineStep {
     @Override
     public void run(String data) {
-        System.out.println("【步骤1】检查数据是否为空: " + data);
+        System.out.println("【步骤1】处理数据: " + data);
+        // 你的业务逻辑
     }
 }

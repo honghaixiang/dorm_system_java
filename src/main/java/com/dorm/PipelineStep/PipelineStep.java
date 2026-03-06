@@ -1,4 +1,5 @@
 package com.dorm.PipelineStep;
 
-public class PipelineStep {
+public interface PipelineStep {
+    void run();
 }
