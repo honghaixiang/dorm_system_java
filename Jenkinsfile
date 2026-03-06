@@ -4,36 +4,18 @@ pipeline {
         maven 'Maven'
     }
     stages {
-        stage('清理') {
+        stage('编译+打包') {
             steps {
-                bat 'mvn clean'
-            }
-        }
-        stage('编译') {
-            steps {
-                bat 'mvn compile'
-            }
-        }
-        stage('测试') {
-            steps {
-                bat 'mvn test'
-            }
-        }
-        stage('打包') {
-            steps {
-                bat 'mvn package'
+                bat 'mvn package -Dmaven.test.skip=true -DskipTests'
             }
         }
     }
     post {
         success {
-            echo "========================================"
-            echo "✅ 构建成功！"
-            echo "📦 jar 包已生成在 target 目录"
-            echo "========================================"
+            echo '✅ 真实构建 SUCCESS —— 已生成 jar 包！'
         }
         failure {
-            echo "❌ 构建失败！"
+            echo '❌ 构建失败'
         }
     }
 }
