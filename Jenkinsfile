@@ -1,24 +1,30 @@
 pipeline {
     agent any
+    tools {
+        maven 'Maven'
+    }
     stages {
-        stage('✅ 代码拉取成功') {
+        stage('清理') {
             steps {
-                echo '代码拉取完成'
+                bat 'mvn clean -DskipTests'
             }
         }
-        stage('✅ 构建成功') {
+        stage('编译') {
             steps {
-                echo '构建流程正常运行'
+                bat 'mvn compile -DskipTests'
+            }
+        }
+        stage('打包') {
+            steps {
+                bat 'mvn package -DskipTests'
             }
         }
     }
     post {
         success {
             echo '===================================='
-            echo '🎉 Jenkins 流水线 **正式可用**！'
-            echo '✅ Git 自动拉取'
-            echo '✅ 自动构建'
-            echo '✅ 自动打包（下一步开启）'
+            echo '✅ 构建成功！'
+            echo '📦 jar 包已生成在 target 文件夹'
             echo '===================================='
         }
     }
